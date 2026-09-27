@@ -22,7 +22,7 @@ nominal level is a model input, not a measured playing strength.
 - `engine/maia3_adapter.py`: board history, legal-move mapping, and Chess960
   castling-action adapter (from the research code).
 - `run-engine.sh`: engine launcher, also usable from a GUI such as En Croissant.
-- `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual games,
+- `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual or rated games, as the challenger chooses;
   Chess960 and standard, bullet to rapid (base 1–25 minutes, increment up to
   20 seconds), humans only, two simultaneous games per bot and one per opponent,
   no books or tablebases, no automatic draw offers or resignations). The bots use Temperature 0.8 and TopP 0.9, tuned from test games: at Temperature 1.0 without TopP the bot played too many unlikely moves, and TopP 0.95 still felt too easy. The model
