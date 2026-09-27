@@ -59,8 +59,11 @@ nominal level is a model input, not a measured playing strength.
 
 - **Start.** `./run-bots.sh` (all levels) or `./run-bots.sh 1600`. Logs go to
   `logs/<level>.log`.
-- **Stop.** `./stop-bots.sh` finishes running games first; run it twice to
-  stop immediately.
+- **Stop.** `./stop-bots.sh` (all levels) or `./stop-bots.sh 1600`. It finds
+  processes by config path, interrupts them, and terminates any still running
+  after 15 seconds (`STOP_WAIT_SECONDS`). `run-bots.sh` refuses to start a level
+  that is already running: two processes with the same token trigger Lichess
+  rate limits (HTTP 429).
 
 ## Network
 

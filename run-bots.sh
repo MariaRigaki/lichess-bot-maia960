@@ -13,6 +13,10 @@ for LEVEL in $LEVELS; do
     echo "Missing token file: $TOKEN_FILE" >&2
     exit 1
   fi
+  if pgrep -f "lichess-bot.py --config $ROOT/.run/$LEVEL.yml" >/dev/null; then
+    echo "Level $LEVEL is already running; run ./stop-bots.sh $LEVEL first." >&2
+    continue
+  fi
   sed "s#__ROOT__#$ROOT#g" "$ROOT/bots/$LEVEL.yml" > "$ROOT/.run/$LEVEL.yml"
   (
     cd "$LICHESS_BOT"
