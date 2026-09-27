@@ -29,19 +29,21 @@ nominal level is a model input, not a measured playing strength.
   was trained on blitz moves made with at least 30 seconds on the clock, so
   bullet play imitates unhurried blitz rather than bullet habits.
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per
-  level.
+  level. `upgrade-bot.sh`: upgrade a fresh account to BOT.
 - `tests/smoke_engine.py`: drives the engine through python-chess as
   lichess-bot does.
 
 ## Setup
 
-1. Run `./setup.sh`. It creates `.venv/` (CPU PyTorch, pinned `maia3`,
-   lichess-bot requirements) and clones
+1. Clone this repository and run `./setup.sh`:
+   `git clone https://github.com/MariaRigaki/lichess-bot-maia960.git && cd lichess-bot-maia960 && ./setup.sh`.
+   The script requires [uv](https://docs.astral.sh/uv/). It creates `.venv/`
+   (CPU PyTorch, pinned `maia3`, lichess-bot requirements) and clones
    [lichess-bot](https://github.com/lichess-bot-devs/lichess-bot) next to this
    repository if missing. Override its location with `LICHESS_BOT_DIR`.
 2. Put the checkpoint at `checkpoints/maia3-960-ft65536-step150000.pt`
    (SHA-256 `14e89c7e0557a020d5424a9746dd1e1a5c8aee6f27d3220250482bad82dfcafa`),
-   or set `MAIA3_CHECKPOINT`.
+   or set `MAIA3_CHECKPOINT`. It is not in git.
 3. Run the smoke test: `.venv/bin/python tests/smoke_engine.py`.
 
 ## Lichess accounts (manual, once per level)
@@ -51,10 +53,8 @@ nominal level is a model input, not a measured playing strength.
 3. Save the token as `tokens/<level>.token` (for example `tokens/1600.token`),
    then run `chmod 600 tokens/*`. The `tokens/` directory is ignored by git.
 4. Upgrade the account to a BOT account, which is **irreversible**:
-   `cd ../lichess-bot && LICHESS_BOT_TOKEN="$(cat ../maia960-bot/tokens/1600.token)" ../maia960-bot/.venv/bin/python lichess-bot.py --config ../maia960-bot/.run/1600.yml -u`
-   (run `./run-bots.sh 1600` once first to generate `.run/1600.yml`, or copy
-   `bots/1600.yml` with `__ROOT__` replaced by the absolute path of this
-   repository).
+   `./upgrade-bot.sh 1600`. The script shows the account name and asks you to
+   type it to confirm.
 5. Write the profile: what the bot is, the level it imitates, that it is a
    university hobby project, and a contact.
 
