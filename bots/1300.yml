@@ -62,9 +62,8 @@ challenge:
   min_base: 60
   max_days: 14
   min_days: 1
-  variants:
+  variants:                  # Chess960 only; standard challenges are declined.
     - chess960
-    - standard
   time_controls:              # Rapid and faster (bots cannot play ultraBullet).
     - bullet
     - blitz
