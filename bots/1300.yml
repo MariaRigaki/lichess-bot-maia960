@@ -73,8 +73,8 @@ challenge:
   bullet_requires_increment: false
   max_simultaneous_games_per_user: 1
 
-greeting:
-  hello: "Hi! I'm {me}, a Maia-3 model fine-tuned on Lichess Chess960 blitz games, imitating a 1300-rated player. I predict human moves and do not search ahead. Have fun!"
+greeting:                     # Lichess rejects chat messages over 140 characters; a rejected greeting also blocks the first move.
+  hello: "Hi! I'm {me}: Maia-3 fine-tuned on Lichess Chess960 blitz, imitating a 1300 player. No search. Source in profile. Have fun!"
   goodbye: "Good game, thanks for playing!"
   hello_spectators: "Hi! I'm {me}, a human-imitating Chess960 bot at the 1300 level."
   goodbye_spectators: "Thanks for watching!"
