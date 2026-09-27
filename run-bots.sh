@@ -15,6 +15,10 @@ for LEVEL in $LEVELS; do
     echo "Missing token file: $TOKEN_FILE" >&2
     exit 1
   fi
+  if systemctl --user is-active --quiet "maia960-bot@$LEVEL" 2>/dev/null; then
+    echo "Level $LEVEL is running as systemd service maia960-bot@$LEVEL; not starting a second instance." >&2
+    continue
+  fi
   if [ -s "$PGID_FILE" ] && pgrep -g "$(cat "$PGID_FILE")" >/dev/null; then
     echo "Level $LEVEL is already running (process group $(cat "$PGID_FILE")); run ./stop-bots.sh $LEVEL first." >&2
     continue

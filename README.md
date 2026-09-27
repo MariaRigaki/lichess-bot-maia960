@@ -29,7 +29,7 @@ nominal level is a model input, not a measured playing strength.
   was trained on blitz moves made with at least 30 seconds on the clock, so
   bullet play imitates unhurried blitz rather than bullet habits.
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per
-  level. `upgrade-bot.sh`: upgrade a fresh account to BOT.
+  level (manual use). `serve-bot.sh` and `install-service.sh`: systemd hosting. `upgrade-bot.sh`: upgrade a fresh account to BOT.
 - `tests/smoke_engine.py`: drives the engine through python-chess as
   lichess-bot does.
 
@@ -73,6 +73,30 @@ nominal level is a model input, not a measured playing strength.
   still alive. Two consumers of the same token's event stream trigger Lichess
   rate limits (HTTP 429). After a 429, wait at least a minute before
   restarting.
+
+## Running as a systemd user service
+
+For unattended hosting, use the per-user systemd template instead of
+`run-bots.sh`. Do not run both for the same level: two instances with one token
+trigger Lichess rate limits.
+
+1. Install the unit once: `./install-service.sh`. This writes
+   `~/.config/systemd/user/maia960-bot@.service` for this repository's path.
+2. Stop any instance started by `run-bots.sh`: `./stop-bots.sh 1600`.
+3. Start and enable a level: `systemctl --user enable --now maia960-bot@1600`.
+4. Enable lingering so the service survives logout and starts at boot:
+   `loginctl enable-linger "$USER"`. This is a system setting and usually
+   requires an administrator.
+
+Management commands:
+
+- **Status and logs.** `systemctl --user status maia960-bot@1600`,
+  `journalctl --user -u maia960-bot@1600 -f`.
+- **Stop or restart.** `systemctl --user stop maia960-bot@1600` (stops the
+  whole process group, including children and engines), or
+  `systemctl --user restart maia960-bot@1600` after changing a config.
+- **Crash recovery.** The service restarts after crashes, waiting 120 seconds
+  between attempts to respect Lichess rate limits.
 
 ## Network
 
