@@ -76,8 +76,13 @@ are a negligible load.
 
 ## Licences
 
-- **This repository.** GNU GPLv3 (see `LICENSE`), because it uses Maia-3 code
-  and weights, which are GPLv3.
+- **This repository.** GNU **Affero** General Public License v3 (AGPLv3; see
+  `LICENSE`), because it uses Maia-3 code and weights, which are AGPLv3 (the
+  `LICENSE` file of github.com/CSSLab/maia3).
 - **Weights.** The fine-tuned weights are a modified version of the released
   Maia-3 5M checkpoint (Monroe et al., Chessformer, ICLR 2026).
+- **Network use (AGPL section 13).** Lichess players interact with this
+  program over a network, so they must be offered its source code. Publish this
+  repository and link it in each bot's Lichess profile and greeting before the
+  bots go public.
 - **lichess-bot.** AGPLv3; used unmodified as a separate checkout.
