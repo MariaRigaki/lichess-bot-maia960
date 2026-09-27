@@ -3,7 +3,9 @@
 Uses the same board history, rating inputs, and Chess960 castling-action
 adapter as the RQ3 training and evaluation code. No search: each move is
 chosen from the policy over legal moves, either sampled with a temperature
-or, at temperature 0, the most likely move.
+(optionally restricted to the smallest set of most likely moves whose total
+probability reaches TopP, i.e. nucleus sampling) or, at temperature 0, the most
+likely move.
 
 Example:
     .venv/bin/python engine/maia3_chess960_uci.py \
@@ -34,6 +36,27 @@ def load_model(checkpoint, device):
     model = MAIA3Model(cfg)
     model.load_state_dict(state, strict=True)
     return model.to(device).eval(), cfg
+
+
+def choose_index(logp, temperature, top_p, generator=None):
+    """Pick a legal-move index: argmax at temperature 0, otherwise sample.
+
+    Temperature rescales the log-probabilities; TopP then keeps the smallest set
+    of most likely moves whose total tempered probability reaches TopP (always
+    at least one move) and renormalizes before sampling.
+    """
+    if temperature <= 0:
+        return int(torch.argmax(logp))
+    probs = torch.softmax(logp / temperature, dim=0)
+    if top_p < 1.0:
+        order = torch.argsort(probs, descending=True)
+        cumulative = torch.cumsum(probs[order], dim=0)
+        keep = int(torch.searchsorted(cumulative, torch.tensor(top_p, dtype=cumulative.dtype))) + 1
+        mask = torch.zeros_like(probs, dtype=torch.bool)
+        mask[order[:max(1, keep)]] = True
+        probs = torch.where(mask, probs, torch.zeros_like(probs))
+        probs = probs / probs.sum()
+    return int(torch.multinomial(probs, 1, generator=generator))
 
 
 def nonstandard_castling_field(fen):
@@ -76,6 +99,7 @@ class Engine:
         self.self_elo = args.elo
         self.oppo_elo = args.elo
         self.temperature = args.temperature
+        self.top_p = args.top_p
         self.board = chess.Board()
 
     def send(self, line):
@@ -96,6 +120,7 @@ class Engine:
         self.send(f"option name SelfElo type spin default {self.args.elo} min 500 max 3000")
         self.send(f"option name OppoElo type spin default {self.args.elo} min 500 max 3000")
         self.send(f"option name Temperature type string default {self.args.temperature}")
+        self.send(f"option name TopP type string default {self.args.top_p}")
         self.send("option name UCI_Opponent type string default none")
         self.send("uciok")
 
@@ -115,6 +140,8 @@ class Engine:
                 self.oppo_elo = int(value)
             elif name == "temperature":
                 self.temperature = max(0.0, float(value))
+            elif name == "topp":
+                self.top_p = min(1.0, max(0.0, float(value)))
             elif name == "uci_opponent":
                 # Format: <title|none> <rating|none> <computer|human> <name>
                 parts = value.split()
@@ -157,10 +184,7 @@ class Engine:
         logits = self.model(tokens, own, opp)[0][0]
         moves, logp = log_policy(logits, self.board)
         probs = logp.exp()
-        if self.temperature <= 0:
-            index = int(torch.argmax(logp))
-        else:
-            index = int(torch.multinomial(torch.softmax(logp / self.temperature, dim=0), 1))
+        index = choose_index(logp, self.temperature, self.top_p)
         move = moves[index]
         uci = self.board.uci(move, chess960=self.game960)
         top = torch.argsort(probs, descending=True)[:3].tolist()
@@ -168,7 +192,9 @@ class Engine:
         # No score is reported: the policy has no evaluation, and a placeholder
         # score would trigger GUI or lichess-bot draw and resignation rules.
         self.send(f"info depth 1 nodes 1 pv {uci}")
-        self.send(f"info string policy {summary} (SelfElo {self.self_elo}, OppoElo {self.oppo_elo})")
+        self.send(f"info string played {self.board.san(move)}={100 * float(probs[index]):.1f}%; "
+                  f"policy {summary} (SelfElo {self.self_elo}, OppoElo {self.oppo_elo}, "
+                  f"T {self.temperature}, TopP {self.top_p})")
         self.send(f"bestmove {uci}")
 
     def loop(self):
@@ -205,6 +231,8 @@ def main():
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--elo", type=int, default=1600)
     parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--top-p", type=float, default=1.0,
+                        help="Nucleus sampling threshold; 1.0 disables it")
     args = parser.parse_args()
     torch.set_num_threads(2)
     Engine(args).loop()

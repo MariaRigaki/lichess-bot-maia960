@@ -16,13 +16,16 @@ nominal level is a model input, not a measured playing strength.
     standard `UCI_Opponent` option.
   - `Temperature`: 1.0 samples human-like moves; lower values play stronger
     than the nominal rating; 0 always plays the most likely move.
+  - `TopP`: nucleus sampling. Only the smallest set of most likely moves whose
+    total probability reaches TopP can be played (1.0 disables it). This removes
+    rare, unlikely moves while keeping variety among plausible ones.
 - `engine/maia3_adapter.py`: board history, legal-move mapping, and Chess960
   castling-action adapter (from the research code).
 - `run-engine.sh`: engine launcher, also usable from a GUI such as En Croissant.
 - `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual games,
   Chess960 and standard, bullet to rapid (base 1–25 minutes, increment up to
   20 seconds), humans only, two simultaneous games per bot and one per opponent,
-  no books or tablebases, no automatic draw offers or resignations). Temperature is 0.8: at 1.0 the first test game showed too many unlikely moves. The model
+  no books or tablebases, no automatic draw offers or resignations). The bots use Temperature 0.8 and TopP 0.95: at Temperature 1.0 without TopP, the first test game showed too many unlikely moves. The model
   was trained on blitz moves made with at least 30 seconds on the clock, so
   bullet play imitates unhurried blitz rather than bullet habits.
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per

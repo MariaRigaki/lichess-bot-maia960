@@ -33,6 +33,7 @@ engine:
     SelfElo: 1300
     OppoElo: 1600            # Default; replaced per game by the opponent's rating via UCI_Opponent.
     Temperature: "0.8"         # 1.0 sampled too many unlikely moves in practice; lower is stronger.
+    TopP: "0.95"               # Never play moves outside the top 95% of probability mass (nucleus sampling).
   silence_stderr: false
 
 abort_time: 30

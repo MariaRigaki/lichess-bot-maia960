@@ -27,7 +27,7 @@ def main():
     rng = random.Random(0)
     engine = chess.engine.SimpleEngine.popen_uci(str(ROOT / "run-engine.sh"))
     try:
-        engine.configure({"SelfElo": 1300, "Temperature": "1.0"})
+        engine.configure({"SelfElo": 1300, "Temperature": "0.8", "TopP": "0.95"})
         engine.send_opponent_information(
             opponent=chess.engine.Opponent(name="tester", title=None, rating=1734, is_engine=False),
             engine_rating=1300)
