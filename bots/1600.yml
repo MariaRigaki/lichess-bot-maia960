@@ -73,7 +73,7 @@ challenge:
   max_simultaneous_games_per_user: 1
 
 greeting:
-  hello: "Hi! I'm {me}, a Maia-3 model fine-tuned on Lichess Chess960 blitz games, imitating a 1600-rated player. I play fast and do not search. Have fun!"
+  hello: "Hi! I'm {me}, a Maia-3 model fine-tuned on Lichess Chess960 blitz games, imitating a 1600-rated player. I predict human moves and do not search ahead. Have fun!"
   goodbye: "Good game, thanks for playing!"
   hello_spectators: "Hi! I'm {me}, a human-imitating Chess960 bot at the 1600 level."
   goodbye_spectators: "Thanks for watching!"

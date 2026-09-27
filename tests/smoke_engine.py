@@ -27,10 +27,10 @@ def main():
     rng = random.Random(0)
     engine = chess.engine.SimpleEngine.popen_uci(str(ROOT / "run-engine.sh"))
     try:
-        engine.configure({"SelfElo": 1200, "Temperature": "1.0"})
+        engine.configure({"SelfElo": 1300, "Temperature": "1.0"})
         engine.send_opponent_information(
             opponent=chess.engine.Opponent(name="tester", title=None, rating=1734, is_engine=False),
-            engine_rating=1200)
+            engine_rating=1300)
         # Chess960: python-chess sets UCI_Chess960 automatically for chess960 boards.
         for setup in (0, 793, 857):
             board = chess.Board.from_chess960_pos(setup)

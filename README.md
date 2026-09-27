@@ -2,8 +2,8 @@
 
 Hobby deployment of a Maia-3 5M model fine-tuned on Lichess Chess960 blitz
 games (65,536 training games, update 150,000 of the chess_960 research
-project). Three Lichess BOT accounts imitate players rated about 1200, 1600,
-and 2000. The bots only predict human moves; they do not search, and their
+project). Three Lichess BOT accounts imitate players rated about 1300, 1600,
+and 1900. The bots only predict human moves; they do not search, and their
 nominal level is a model input, not a measured playing strength.
 
 ## Components
@@ -19,7 +19,7 @@ nominal level is a model input, not a measured playing strength.
 - `engine/maia3_adapter.py`: board history, legal-move mapping, and Chess960
   castling-action adapter (from the research code).
 - `run-engine.sh`: engine launcher, also usable from a GUI such as En Croissant.
-- `bots/{1200,1600,2000}.yml`: lichess-bot configurations (casual games,
+- `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual games,
   Chess960 and standard, blitz and rapid, humans only, no books or tablebases,
   no automatic draw offers or resignations).
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per

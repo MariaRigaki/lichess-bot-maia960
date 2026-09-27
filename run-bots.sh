@@ -1,11 +1,11 @@
 #!/bin/sh
 # Start one lichess-bot process per level. Tokens are read from
 # tokens/<level>.token (one line, chmod 600, not in git).
-# Usage: ./run-bots.sh [level ...]   (default: 1200 1600 2000)
+# Usage: ./run-bots.sh [level ...]   (default: 1300 1600 1900)
 set -e
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 LICHESS_BOT="${LICHESS_BOT_DIR:-$ROOT/../lichess-bot}"
-LEVELS="${*:-1200 1600 2000}"
+LEVELS="${*:-1300 1600 1900}"
 mkdir -p "$ROOT/.run" "$ROOT/logs"
 for LEVEL in $LEVELS; do
   TOKEN_FILE="$ROOT/tokens/$LEVEL.token"
