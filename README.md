@@ -25,7 +25,7 @@ nominal level is a model input, not a measured playing strength.
 - `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual games,
   Chess960 and standard, bullet to rapid (base 1–25 minutes, increment up to
   20 seconds), humans only, two simultaneous games per bot and one per opponent,
-  no books or tablebases, no automatic draw offers or resignations). The bots use Temperature 0.8 and TopP 0.95: at Temperature 1.0 without TopP, the first test game showed too many unlikely moves. The model
+  no books or tablebases, no automatic draw offers or resignations). The bots use Temperature 0.8 and TopP 0.9, tuned from test games: at Temperature 1.0 without TopP the bot played too many unlikely moves, and TopP 0.95 still felt too easy. The model
   was trained on blitz moves made with at least 30 seconds on the clock, so
   bullet play imitates unhurried blitz rather than bullet habits.
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per
