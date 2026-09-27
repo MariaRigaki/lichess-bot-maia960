@@ -1,0 +1,82 @@
+# lichess-bot configuration for the Maia-3 Chess960 bot, level 1200.
+# The token is read from the LICHESS_BOT_TOKEN environment variable (see run-bots.sh).
+token: "set-via-LICHESS_BOT_TOKEN"
+url: "https://lichess.org/"
+
+engine:
+  dir: "__ROOT__"
+  name: "run-engine.sh"
+  working_dir: "__ROOT__"
+  protocol: "uci"
+  ponder: false
+  debug: false
+  polyglot:
+    enabled: false
+  draw_or_resign:            # The engine reports no evaluation; never offer draws or resign automatically.
+    resign_enabled: false
+    offer_draw_enabled: false
+  online_moves:              # The model plays every move itself.
+    chessdb_book:
+      enabled: false
+    lichess_cloud_analysis:
+      enabled: false
+    lichess_opening_explorer:
+      enabled: false
+    online_egtb:
+      enabled: false
+  lichess_bot_tbs:
+    syzygy:
+      enabled: false
+    gaviota:
+      enabled: false
+  uci_options:
+    SelfElo: 1200
+    OppoElo: 1600            # Default; replaced per game by the opponent's rating via UCI_Opponent.
+    Temperature: "1.0"
+  silence_stderr: false
+
+abort_time: 30
+fake_think_time: true        # Play at a human-like pace instead of instantly.
+rate_limiting_delay: 0
+move_overhead: 2000
+max_takebacks_accepted: 0
+quit_after_all_games_finish: true
+
+correspondence:
+  move_time: 10
+  checkin_period: 300
+  disconnect_time: 150
+  ponder: false
+
+challenge:
+  concurrency: 1
+  games_reserved_for_humans: 0
+  sort_by: "first"
+  preference: "human"
+  accept_bot: false          # Humans only; set true to also play other bots.
+  only_bot: false
+  max_increment: 10
+  min_increment: 0
+  max_base: 900
+  min_base: 60
+  max_days: 14
+  min_days: 1
+  variants:
+    - chess960
+    - standard
+  time_controls:
+    - blitz
+    - rapid
+  modes:
+    - casual                 # A human-imitating bot does not always try to win; casual games only.
+  bullet_requires_increment: false
+  max_simultaneous_games_per_user: 1
+
+greeting:
+  hello: "Hi! I'm {me}, a Maia-3 model fine-tuned on Lichess Chess960 blitz games, imitating a 1200-rated player. I play fast and do not search. Have fun!"
+  goodbye: "Good game, thanks for playing!"
+  hello_spectators: "Hi! I'm {me}, a human-imitating Chess960 bot at the 1200 level."
+  goodbye_spectators: "Thanks for watching!"
+
+matchmaking:
+  allow_matchmaking: false

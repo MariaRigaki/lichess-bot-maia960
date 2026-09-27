@@ -1,0 +1,6 @@
+.venv/
+.run/
+logs/
+tokens/
+checkpoints/*.pt
+__pycache__/
