@@ -49,22 +49,23 @@ correspondence:
   ponder: false
 
 challenge:
-  concurrency: 1
+  concurrency: 2               # About 310 MB RAM per game (one engine process each); CPU is negligible.
   games_reserved_for_humans: 0
   sort_by: "first"
   preference: "human"
   accept_bot: false          # Humans only; set true to also play other bots.
   only_bot: false
-  max_increment: 10
+  max_increment: 20
   min_increment: 0
-  max_base: 900
+  max_base: 1500               # 25 minutes, the upper edge of Lichess rapid.
   min_base: 60
   max_days: 14
   min_days: 1
   variants:
     - chess960
     - standard
-  time_controls:
+  time_controls:              # Rapid and faster (bots cannot play ultraBullet).
+    - bullet
     - blitz
     - rapid
   modes:

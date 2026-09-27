@@ -20,8 +20,11 @@ nominal level is a model input, not a measured playing strength.
   castling-action adapter (from the research code).
 - `run-engine.sh`: engine launcher, also usable from a GUI such as En Croissant.
 - `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual games,
-  Chess960 and standard, blitz and rapid, humans only, no books or tablebases,
-  no automatic draw offers or resignations).
+  Chess960 and standard, bullet to rapid (base 1–25 minutes, increment up to
+  20 seconds), humans only, two simultaneous games per bot and one per opponent,
+  no books or tablebases, no automatic draw offers or resignations). The model
+  was trained on blitz moves made with at least 30 seconds on the clock, so
+  bullet play imitates unhurried blitz rather than bullet habits.
 - `run-bots.sh` / `stop-bots.sh`: start and stop one lichess-bot process per
   level.
 - `tests/smoke_engine.py`: drives the engine through python-chess as
@@ -70,9 +73,10 @@ nominal level is a model input, not a measured playing strength.
 
 ## Resources
 
-Each bot is one lichess-bot process plus one engine process on CPU (about
-0.1 s and a few hundred MB of memory per move). Three bots with one game each
-are a negligible load.
+Each game runs its own engine process: about 310 MB of memory and about
+20 ms of CPU per move (measured on a laptop CPU). With three bots at two
+simultaneous games each, plan for about 2 GB of memory plus the lichess-bot
+processes. CPU use is negligible.
 
 ## Licences
 
