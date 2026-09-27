@@ -32,7 +32,7 @@ engine:
   uci_options:
     SelfElo: 1600
     OppoElo: 1600            # Default; replaced per game by the opponent's rating via UCI_Opponent.
-    Temperature: "1.0"
+    Temperature: "0.8"         # 1.0 sampled too many unlikely moves in practice; lower is stronger.
   silence_stderr: false
 
 abort_time: 30
