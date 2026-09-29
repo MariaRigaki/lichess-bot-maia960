@@ -50,7 +50,7 @@ correspondence:
   ponder: false
 
 challenge:
-  concurrency: 2               # About 310 MB RAM per game (one engine process each); CPU is negligible.
+  concurrency: 2               # One engine process per game: about 0.35 GB RAM with 5M, 0.9 GB with 79M (see README).
   games_reserved_for_humans: 0
   sort_by: "first"
   preference: "human"

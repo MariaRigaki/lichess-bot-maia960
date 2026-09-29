@@ -1,8 +1,9 @@
 # Maia-3 Chess960 bots
 
-Hobby deployment of a Maia-3 5M model fine-tuned on Lichess Chess960 blitz
-games (65,536 training games, update 150,000 of the chess_960 research
-project). Three Lichess BOT accounts imitate players rated about 1300, 1600,
+Hobby deployment of Maia-3 models fine-tuned on Lichess Chess960 blitz
+games (65,536 training games) in the chess_960 research project. The default
+is the 5M model (update 150,000); the fine-tuned 79M model (update 116,000)
+predicts Chess960 moves better and can be selected in `engine.env`. Three Lichess BOT accounts imitate players rated about 1300, 1600,
 and 1900. The bots only predict human moves; they do not search, and their
 nominal level is a model input, not a measured playing strength.
 
@@ -44,6 +45,21 @@ nominal level is a model input, not a measured playing strength.
 2. Put the checkpoint at `checkpoints/maia3-960-ft65536-step150000.pt`
    (SHA-256 `14e89c7e0557a020d5424a9746dd1e1a5c8aee6f27d3220250482bad82dfcafa`),
    or set `MAIA3_CHECKPOINT`. It is not in git.
+   To use another checkpoint, such as the fine-tuned 79M model, create
+   `engine.env` (not in git) next to `run-engine.sh`:
+   ```sh
+   MAIA3_CHECKPOINT=/path/to/ft79m-65536-step116000.pt
+   MAIA3_THREADS=1
+   ```
+   (SHA-256 of the 79M checkpoint:
+   `c76c5dd34f80cebabb62a87706dbb7378981e3bacb30557a090dd26e5dcbd2b4`.)
+   The model size (5M, 23M, or 79M) is inferred from the checkpoint; set
+   `MAIA3_MODEL` (for example `maia3-79m`) to force it. Measured on a 4-core
+   2009 Xeon, one move takes about 40 ms with 5M and 0.2 s (4 threads) to
+   0.6 s (1 thread) with 79M; each engine process needs about 0.35 GB with 5M
+   and 0.9 GB with 79M. With several bots and games at once, one thread per
+   engine avoids the processes competing for the same cores. Restart the bots
+   after changing `engine.env`.
 3. Run the smoke test: `.venv/bin/python tests/smoke_engine.py`.
 
 ## Lichess accounts (manual, once per level)
@@ -119,8 +135,8 @@ processes. CPU use is negligible.
 - **This repository.** GNU **Affero** General Public License v3 (AGPLv3; see
   `LICENSE`), because it uses Maia-3 code and weights, which are AGPLv3 (the
   `LICENSE` file of github.com/CSSLab/maia3).
-- **Weights.** The fine-tuned weights are a modified version of the released
-  Maia-3 5M checkpoint (Monroe et al., Chessformer, ICLR 2026).
+- **Weights.** The fine-tuned weights are modified versions of the released
+  Maia-3 5M and 79M checkpoints (Monroe et al., Chessformer, ICLR 2026).
 - **Network use (AGPL section 13).** Lichess players interact with this
   program over a network, so they must be offered its source code. Publish this
   repository and link it in each bot's Lichess profile and greeting before the

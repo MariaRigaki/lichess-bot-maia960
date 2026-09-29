@@ -11,6 +11,9 @@ Example:
     .venv/bin/python engine/maia3_chess960_uci.py \
         --checkpoint checkpoints/maia3-960-ft65536-step150000.pt --elo 1600
 
+The model size (5M, 23M, or 79M) is inferred from the checkpoint unless
+--model is given.
+
 The standard UCI option UCI_Opponent (sent by lichess-bot through python-chess)
 sets OppoElo to the opponent's rating for each game.
 """
@@ -26,13 +29,27 @@ from maia3.models import MAIA3Model
 from maia3_adapter import config, log_policy, tokens_for
 
 NAME = "Maia3-960"
+MODEL_NAMES = ("maia3-5m", "maia3-23m", "maia3-79m")
 
 
-def load_model(checkpoint, device):
-    cfg = config(checkpoint, device)
+def infer_model_name(state):
+    """Released Maia-3 size from the parameter count (about 5M, 23M, or 79M)."""
+    count = sum(value.numel() for value in state.values() if value.is_floating_point())
+    if count < 12_000_000:
+        return "maia3-5m"
+    if count < 45_000_000:
+        return "maia3-23m"
+    return "maia3-79m"
+
+
+def load_model(checkpoint, device, model_name="auto"):
     state = torch.load(checkpoint, map_location="cpu", weights_only=True)
     state = state.get("model_state_dict", state)
     state = {key.replace("smolgen", "gab"): value for key, value in state.items()}
+    if model_name == "auto":
+        model_name = infer_model_name(state)
+    print(f"model {model_name}", file=sys.stderr, flush=True)
+    cfg = config(checkpoint, device, model_name)
     model = MAIA3Model(cfg)
     model.load_state_dict(state, strict=True)
     return model.to(device).eval(), cfg
@@ -111,7 +128,8 @@ class Engine:
     def ensure_model(self):
         if self.model is None:
             print(f"loading {self.args.checkpoint}", file=sys.stderr, flush=True)
-            self.model, self.cfg = load_model(self.args.checkpoint, self.args.device)
+            self.model, self.cfg = load_model(self.args.checkpoint, self.args.device,
+                                              self.args.model)
 
     def cmd_uci(self):
         self.send(f"id name {NAME}")
@@ -227,14 +245,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--checkpoint", required=True,
-                        help="Maia-3 5M state dict (fine-tuned step-*.pt or released checkpoint file)")
+                        help="Maia-3 state dict (fine-tuned step-*.pt or released checkpoint file)")
+    parser.add_argument("--model", choices=("auto",) + MODEL_NAMES, default="auto",
+                        help="Model size; 'auto' infers it from the checkpoint")
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--threads", type=int, default=2,
+                        help="PyTorch CPU threads per engine process")
     parser.add_argument("--elo", type=int, default=1600)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top-p", type=float, default=1.0,
                         help="Nucleus sampling threshold; 1.0 disables it")
     args = parser.parse_args()
-    torch.set_num_threads(2)
+    torch.set_num_threads(args.threads)
     Engine(args).loop()
 
 
