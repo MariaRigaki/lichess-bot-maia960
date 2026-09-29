@@ -25,7 +25,7 @@ nominal level is a model input, not a measured playing strength.
 - `run-engine.sh`: engine launcher, also usable from a GUI such as En Croissant.
 - `bots/{1300,1600,1900}.yml`: lichess-bot configurations (casual or rated games, as the challenger chooses;
   Chess960 only, bullet to rapid (base 1–25 minutes, increment up to
-  20 seconds), humans only, two simultaneous games per bot and one per opponent,
+  20 seconds), humans only, up to three simultaneous games per bot (two for 1300) and one per opponent,
   no books or tablebases, no automatic draw offers or resignations). The bots use Temperature 0.8 and TopP 0.9, tuned from test games: at Temperature 1.0 without TopP the bot played too many unlikely moves, and TopP 0.95 still felt too easy. The model
   was trained on blitz moves made with at least 30 seconds on the clock, so
   bullet play imitates unhurried blitz rather than bullet habits.
@@ -125,10 +125,12 @@ Management commands:
 
 ## Resources
 
-Each game runs its own engine process: about 310 MB of memory and about
-20 ms of CPU per move (measured on a laptop CPU). With three bots at two
-simultaneous games each, plan for about 2 GB of memory plus the lichess-bot
-processes. CPU use is negligible.
+Each game runs its own engine process. With the 5M model it needs about
+0.35 GB of memory and 40 ms of CPU per move; with the 79M model, about 0.9 GB
+and 0.6 s per move on one thread (measured on a 4-core 2009 Xeon). With the
+1600 and 1900 bots at three simultaneous games each on 79M, plan for about
+6 GB of memory plus the lichess-bot processes; with six engines sharing four
+cores, a move can take close to a second when all are thinking at once.
 
 ## Licences
 
