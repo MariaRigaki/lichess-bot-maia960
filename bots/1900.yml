@@ -32,7 +32,7 @@ engine:
   uci_options:
     SelfElo: 1900
     OppoElo: 1600            # Default; replaced per game by the opponent's rating via UCI_Opponent.
-    Temperature: "0.8"         # 1.0 sampled too many unlikely moves in practice; lower is stronger.
+    Temperature: "0.6"         # 1.0 sampled too many unlikely moves; 0.6 lowers blunders without fully fixing the move choice (2026-10-22 check).
     TopP: "0.9"                # Never play moves outside the top 90% of probability mass (nucleus sampling).
   silence_stderr: false
 
